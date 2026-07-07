@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Global Hub | Premium</title>
+    <style>
+        :root {
+            --bg-color: #0f0f0f;
+            --card-bg: #1c1c1c;
+            --accent-color: #f47521;
+            --text-color: #ffffff;
+            --text-muted: #888888;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            color: var(--accent-color);
+            font-size: 2.8rem;
+            margin: 0;
+            letter-spacing: -1px;
+        }
+
+                /* Aviso flotante de privacidad */
+        .aviso-flotante {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            max-width: 350px;
+            background: rgba(28, 28, 28, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid #333;
+            border-left: 4px solid var(--accent-color);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 9999;
+            display: none; /* Se activa con JS */
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .aviso-flotante p {
+            font-size: 0.85rem;
+            margin: 0 0 15px 0;
+            line-height: 1.4;
+            color: #ddd;
+        }
+
+        .btn-aceptar-aviso {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.8rem;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .btn-aceptar-aviso:hover {
+            background-color: #ff8533;
+        }
+
+
+        /* Estilos para las etiquetas de idioma */
+        .filter-tags {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .tag-btn {
+            background-color: #252525;
+            border: 1px solid #333;
+            color: var(--text-muted);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tag-btn:hover {
+            border-color: var(--accent-color);
+            color: white;
+        }
+
+        .tag-btn.active {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: white;
+            box-shadow: 0 0 15px rgba(244, 117, 33, 0.3);
+        }
+
+        /* Estilos para el Disclaimer */
+        .disclaimer {
+            max-width: 800px;
+            margin: 40px auto 20px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-top: 1px solid #333;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .disclaimer strong {
+            color: var(--accent-color);
+        }
+
+        .disclaimer a {
+            color: var(--text-color);
+            text-decoration: underline;
+        }
+        
+        /* Estilos para el Modo Mantenimiento */
+        .mantenimiento-container {
+            display: none; /* Oculto por defecto */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .mantenimiento-container h2 {
+            color: var(--accent-color);
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid #222;
+            border-top: 6px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .instrucciones {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 10px;
+            background: #1a1a1a;
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+
+        /* Controles */
+        .controls {
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            padding: 15px 25px;
+            font-size: 1rem;
+            background-color: var(--card-bg);
+            border: 2px solid #333;
+            border-radius: 50px;
+            color: var(--text-color);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .btn-random {
+            padding: 0 20px;
+            background-color: var(--accent-color);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: transform 0.2s;
+        }
+
+        .btn-random:hover { transform: scale(1.1); }
+
+        /* Grid */
+        .anime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        /* REGLA PARA MÓVILES (Pantallas de menos de 600px) */
+        @media (max-width: 600px) {
+            .anime-grid {
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 10px; 
+                padding: 5px;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .anime-title {
+                font-size: 0.85rem;
+            }
+            
+            .filter-tags {
+                gap: 5px;
+                overflow-x: auto; 
+                justify-content: flex-start;
+                padding-bottom: 10px;
+            }
+        }
+
+        .anime-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .anime-card:hover { transform: translateY(-10px); }
+
+        .poster-container { width: 100%; aspect-ratio: 2/3; background: #252525; }
+        .poster-img { width: 100%; height: 100%; object-fit: cover; }
+
+        .anime-info {
+            padding: 15px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            position: absolute;
+            bottom: 0; width: 100%; box-sizing: border-box;
+        }
+
+        .anime-title {
+            font-size: 0.95rem; margin: 0 0 5px 0;
+            display: -webkit-box; line-clamp: 2; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+
+        .badge {
+            display: inline-block;
+            margin-top: 5px;
+            letter-spacing: 0.5px;
+            padding: 3px 8px;
+            font-size: 0.7rem;
+            background: rgba(244, 117, 33, 0.9);
+            
+            /* OPTIMIZACIÓN: Evita que el texto se rompa de forma fea */
+            border-radius: 4px;
+            white-space: nowrap; /* Mantiene el idioma en una sola pieza */
+            max-width: 100%;    /* No permite que desborde la tarjeta */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Pone "..." si el texto es demasiado largo */
+        }
+
+        .skeleton {
+            height: 300px; border-radius: 12px;
+            background: linear-gradient(90deg, #1c1c1c 25%, #252525 50%, #1c1c1c 75%);
+            background-size: 200% 100%; animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .contador { text-align: center; margin-bottom: 20px; color: var(--text-muted); font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Anime Hub</h1>
+    </header>
+
+    <div class="filter-tags">
+        <button class="tag-btn active" data-lang="Todos">Todos</button>
+        <button class="tag-btn" data-lang="Latino">Latino</button>
+        <button class="tag-btn" data-lang="Castellano">España</button>
+        <button class="tag-btn" data-lang="English">English</button>
+        <button class="tag-btn" data-lang="Portuguese">Brasil</button>
+        <button class="tag-btn" data-lang="French">Francia</button>
+    </div>
+
+    <div class="controls">
+        <input type="text" id="buscador" class="search-input" placeholder="Buscar por título...">
+        <button id="btn-random" class="btn-random" title="Anime Aleatorio">🎲</button>
+    </div>
+
+    <div class="contador" id="contador-texto">Cargando catálogo...</div>
+
+    <div id="modo-mantenimiento" class="mantenimiento-container">
+        <div class="spinner"></div>
+        <h2>Actualizando Catálogo...</h2>
+        <p>Estamos sincronizando los últimos doblajes desde Crunchyroll.</p>
+        <div class="instrucciones">
+            Tip: Asegúrate de que el script <code>extractor.py</code> haya terminado en Pop!_OS.
+        </div>
+    </div>
+    
+    <main class="anime-grid" id="contenedor-animes"></main>
+
+    <script>
+        let listaAnimes = [];
+        let idiomaActual = "Todos";
+        const contenedor = document.getElementById('contenedor-animes');
+        const buscador = document.getElementById('buscador');
+        const contadorTexto = document.getElementById('contador-texto');
+        const btnRandom = document.getElementById('btn-random');
+
+        function mostrarSkeletons() {
+            contenedor.innerHTML = Array(12).fill('<div class="skeleton"></div>').join('');
+        }
+
+        async function cargarCatalogo() {
+            // Referencias a los elementos que vamos a ocultar/mostrar
+            const vistaMantenimiento = document.getElementById('modo-mantenimiento');
+            const vistaAnimes = document.getElementById('contenedor-animes');
+            const controles = document.querySelector('.controls');
+            const contador = document.getElementById('contador-texto');
+
+            mostrarSkeletons();
+
+            try {
+                // Pequeña pausa para el efecto visual de los skeletons
+                await new Promise(r => setTimeout(r, 600));
+                
+                const respuesta = await fetch('catalogo_multiidioma.json');
+                listaAnimes = await respuesta.json();
+
+                // Si el archivo JSON existe pero está vacío: []
+                if (listaAnimes.length === 0) {
+                    throw new Error("Catálogo vacío");
+                }
+
+                // SI HAY DATOS: Mostramos todo y ocultamos el mantenimiento
+                vistaMantenimiento.style.display = 'none';
+                vistaAnimes.style.display = 'grid';
+                controles.style.display = 'flex';
+                contador.style.display = 'block';
+                
+                renderizarAnimes(listaAnimes);
+
+            } catch (error) {
+                // SI NO HAY DATOS O HAY ERROR: Mostramos el spinner y ocultamos el resto
+                console.log("Activando modo mantenimiento...");
+                contenedor.innerHTML = ""; // Limpia los skeletons
+                vistaMantenimiento.style.display = 'flex';
+                vistaAnimes.style.display = 'none';
+                controles.style.display = 'none'; 
+                contador.style.display = 'none';  
+            }
+        }
+
+        function filtrarCatalogo() {
+            const term = buscador.value.toLowerCase().trim();
+            const filtrados = listaAnimes.filter(anime => {
+                const coincideTitulo = anime.titulo.toLowerCase().includes(term);
+                const coincideIdioma = (idiomaActual === "Todos") || anime.doblajes.includes(idiomaActual);
+                return coincideTitulo && coincideIdioma;
+            });
+            renderizarAnimes(filtrados);
+        }
+
+        function renderizarAnimes(animes) {
+            contenedor.innerHTML = "";
+            contadorTexto.innerHTML = `Mostrando <b>${animes.length}</b> series en <b>${idiomaActual}</b>`;
+
+            animes.forEach(anime => {
+                const tarjeta = document.createElement('a');
+                tarjeta.className = 'anime-card';
+                tarjeta.href = anime.url;
+                tarjeta.target = '_blank';
+                
+                // --- ESTA ES LA PARTE CORREGIDA ---
+                tarjeta.innerHTML = `
+                    <div class="poster-container">
+                        <img class="poster-img" 
+                             src="${anime.imagen}" 
+                             onerror="this.src='https://placeholder.com'"
+                             referrerpolicy="no-referrer"
+                             loading="lazy">
+                    </div>
+                    <div class="anime-info">
+                        <h3 class="anime-title">${anime.titulo}</h3>
+                        <span class="badge">${anime.doblajes.join(' | ')}</span>
+                    </div>
+                `;
+                contenedor.appendChild(tarjeta);
+            });
+        }
+
+        // Eventos de botones de idioma
+        document.querySelectorAll('.tag-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelector('.tag-btn.active').classList.remove('active');
+                e.target.classList.add('active');
+                idiomaActual = e.target.dataset.lang;
+                filtrarCatalogo();
+            });
+        });
+
+        // Evento del buscador
+        buscador.addEventListener('input', filtrarCatalogo);
+
+        // Evento botón Random
+        btnRandom.addEventListener('click', () => {
+            const visibles = Array.from(contenedor.children).filter(el => el.tagName === 'A');
+            if (visibles.length > 0) {
+                const randomIdx = Math.floor(Math.random() * visibles.length);
+                window.open(visibles[randomIdx].href, '_blank');
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', cargarCatalogo);
+
+        
+        // Función para mostrar el aviso solo si no ha sido aceptado antes
+        function verificarAviso() {
+            const avisoAceptado = localStorage.getItem('avisoAnimeAceptado');
+            if (!avisoAceptado) {
+                document.getElementById('aviso-privacidad').style.display = 'block';
+            }
+        }
+
+        // Función para guardar la decisión y ocultar el aviso
+        function aceptarAviso() {
+            localStorage.setItem('avisoAnimeAceptado', 'true');
+            document.getElementById('aviso-privacidad').style.display = 'none';
+        }
+
+        // Ejecutar la verificación al cargar la página
+        window.addEventListener('DOMContentLoaded', () => {
+            cargarCatalogo(); // Tu función actual
+            verificarAviso(); // Nueva verificación
+        });
+
+
+    </script>
+
+    <footer class="disclaimer">
+        <p>
+            <strong>Aviso Importante:</strong> Este sitio es una herramienta de filtrado independiente y 
+            <strong>no recolecta, almacena ni solicita ningún dato personal</strong> de los usuarios. 
+            Toda la navegación y reproducción se realiza directamente en los servidores oficiales.
+        </p>
+        <p>
+            Para disfrutar del contenido, es estrictamente necesario contar con una cuenta activa en 
+            <a href="https://crunchyroll.com" target="_blank">Crunchyroll</a>. 
+            Este proyecto no aloja videos ni infringe derechos de autor; simplemente facilita la búsqueda de contenido por audio de doblaje.
+        </p>
+    </footer>
+
+    <div id="aviso-privacidad" class="aviso-flotante">
+        <p>
+            <strong>🔒 Privacidad & Requisitos:</strong><br>
+            Este buscador es un filtro independiente. No recolectamos tus datos. 
+            Necesitas una cuenta activa en <strong>Crunchyroll</strong> para ver las series.
+        </p>
+        <button class="btn-aceptar-aviso" onclick="aceptarAviso()">Entendido</button>
+    </div>
+
+
+</body>
+</html>
